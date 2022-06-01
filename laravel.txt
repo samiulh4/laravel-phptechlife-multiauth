@@ -1,0 +1,56 @@
+===================================================
+Laravel 8 Multiauth in Hindi (https://www.youtube.com/watch?v=MuL_5_lHWc8)
+===================================================
+
+1. Install Laravel using composer command
+   composer create-project laravel/laravel mauth
+2. composer require laravel/ui
+3. php artisan ui bootstrap
+4. npm install
+5. npm run dev
+6. php artisan ui:auth
+7. create database and configure .env
+9. php artisan migrate
+
+=> Now default login and register should work.
+
+10. create admins table for admin authentication.
+
+11. Now create model called Admin for admin login, make sure it should be authenticable.
+
+12. For Admin Login we will create seperate guards located in given location:
+    {yourRootDirectory}\config\auth.php
+    php artisan make:model Admin	
+
+13. Now create controller called AdminController using the following artisan command.
+    php artisan make:controller AdminController
+
+14. Now define routes for admin in web.php file
+    {yourRootDirectory}\routes\web.php
+
+Route::group(['prefix' => 'admin'], function() {
+	Route::group(['middleware' => 'admin.guest'], function(){
+		Route::view('/login','admin.login')->name('admin.login');
+		Route::post('/login',[App\Http\AdminLoginController::class, 'authenticate'])->name('admin.auth');
+	});
+	
+	Route::group(['middleware' => 'admin.auth'], function(){
+		Route::get('/dashboard',[App\Http\DashboardController::class, 'dashboard'])->name('admin.dashboard');
+	});
+});
+
+15. We will create "AdminAuthenticate" middleware, where we will override "authenticate" method. 
+
+16. We will create "AdminRedirectIfAuthenticated" middleware, where we will define, the redirection
+    of user, if he is already logged-in.
+
+17 We also need to register these middleware in Kernal.php file.     
+
+18. We will create a login view for admin login form and it would be connected with a login route.    
+	    
+19. Now we will define a custom authenticate method in AdminController for admin login, 
+    called "authenticate". This method will login admin user.
+	
+20. Now we will create a logout method in AdminController. And we also have to create a route 
+    for admin logout.
+    Route::get('/logout', [App\Http\Controllers\AdminController::class, 'logout'])->name('admin.logout');
